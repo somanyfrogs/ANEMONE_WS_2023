@@ -36,6 +36,9 @@ meta <- read_csv("../ANEMONE DATA/Meta_table.csv")
 
 3. 私のGitHubアカウント(https://github.com/somanyfrogs)から  
    レポジトリ'ANEMONE_WS_2023'をDLする
+
+4. このスライドのRコードはフォルダR内の'slide.Rmd'  
+   のRチャンク内に記入してあるので参考にしてください 
    
 
 ## データの説明１
