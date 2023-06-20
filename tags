@@ -20,38 +20,6 @@
 !_TAG_PROC_CWD	/Users/kawatsu/Library/CloudStorage/Dropbox/presentation/2023_ANEMONE_WS/	//
 !_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
 !_TAG_OUTPUT_VERSION	0.0	/current.age/
-!_TAG_KIND_DESCRIPTION!R	f,function	/functions/
-!_TAG_KIND_DESCRIPTION!R	l,library	/libraries/
-!_TAG_KIND_DESCRIPTION!R	s,source	/sources/
-!_TAG_KIND_DESCRIPTION!R	g,globalVar	/global variables having values other than function()/
-!_TAG_KIND_DESCRIPTION!R	v,functionVar	/function variables having values other than function()/
-!_TAG_KIND_DESCRIPTION!R	c,vector	/vectors explicitly created with `c()'/
-!_TAG_KIND_DESCRIPTION!R	L,list	/lists explicitly created with `list()'/
-!_TAG_KIND_DESCRIPTION!R	d,dataframe	/data frame explicitly created with `data.frame()'/
-!_TAG_KIND_DESCRIPTION!R	n,nameattr	/names attribtes in vectors, lists, or dataframes/
-!_TAG_FIELD_DESCRIPTION!R	constructor	/function used for making value assigned to the nameattr tag/
-!_TAG_ROLE_DESCRIPTION!R!library	library	/library attached by library function/
-!_TAG_ROLE_DESCRIPTION!R!library	require	/library attached by require function/
-!_TAG_ROLE_DESCRIPTION!R!source	source	/source loaded by source fucntion/
-!_TAG_PARSER_VERSION!R	0.0	/current.age/
-meta	demo.R	/^meta <- read_csv("ANEMONE DATA\/Meta_table.csv")$/;"	g
-smat	demo.R	/^smat <- read_csv("ANEMONE DATA\/Species_matrix.csv")$/;"	g
-gmat	demo.R	/^gmat <- read_csv("ANEMONE DATA\/Genus_matrix.csv")$/;"	g
-meta	demo.R	/^meta <- read_csv("ANEMONE DATA\/Meta_table.csv")$/;"	g
-metag	demo.R	/^metag <- meta |> distinct(year, lat, lon) %>% rename(long = lon)$/;"	g
-frq	demo.R	/^frq <- foreach(s = distinct(meta2, site)$site, .combine = bind_rows) %do% {$/;"	g
-tmp	demo.R	/^    tmp <- meta2 |> filter(site == s) |> arrange(date)$/;"	g
-tmp0	demo.R	/^tmp0 <- smat |> mutate(across(!samplename, \\(x) if_else(x != 0, 1, 0))) |> summarize(across(!sa/;"	g
-tmp1	demo.R	/^tmp1 <- smat |> summarize(across(!samplename, sum)) |>$/;"	g
-tmp0	demo.R	/^tmp0 <- smat |> mutate(across(!samplename, \\(x) if_else(x != 0, 1, 0))) |> summarize(across(!sa/;"	g
-tmp1	demo.R	/^tmp1 <- smat |> summarize(across(!samplename, sum)) |>$/;"	g
-scale	demo.R	/^    group_by(samplename) |> reframe(Order = str_c("D", 0:2), hillD = vegan::renyi(read, scale = /;"	g
-anonVecf884324a0106	demo.R	/^    pivot_longer(c("D0", "D1", "D2"), names_to = "Order", values_to = "hillD") |>$/;"	c
-names_to	demo.R	/^    pivot_longer(c("D0", "D1", "D2"), names_to = "Order", values_to = "hillD") |>$/;"	n	vector:anonVecf884324a0106
-values_to	demo.R	/^    pivot_longer(c("D0", "D1", "D2"), names_to = "Order", values_to = "hillD") |>$/;"	n	vector:anonVecf884324a0106
-anonVecf884324a0306	demo.R	/^    select(!c(site, year, month, date)) |> pivot_longer(!c(lat, lon), names_to = "Species", valu/;"	c
-names_to	demo.R	/^    select(!c(site, year, month, date)) |> pivot_longer(!c(lat, lon), names_to = "Species", valu/;"	n	vector:anonVecf884324a0306
-values_to	demo.R	/^    select(!c(site, year, month, date)) |> pivot_longer(!c(lat, lon), names_to = "Species", valu/;"	n	vector:anonVecf884324a0306
 !_TAG_KIND_DESCRIPTION!JavaScript	f,function	/functions/
 !_TAG_KIND_DESCRIPTION!JavaScript	c,class	/classes/
 !_TAG_KIND_DESCRIPTION!JavaScript	m,method	/methods/
@@ -389,4 +357,24 @@ qunit-fixture	R/slide_files/reveal.js-3.3.0.1/test/test-markdown.html	/^  		<div
 #qunit-tests pre	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests pre {$/;"	s
 #qunit-tests del	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests del {$/;"	s
 #qunit-tests ins	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests ins {$/;"	s
-#qunit-tests b.counts	R/slide_files
+#qunit-tests b.counts	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests b.counts                       { color: black; }$/;"	c
+#qunit-tests b.passed	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests b.passed                       { color: #5E740B; }$/;"	c
+#qunit-tests b.failed	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests b.failed                       { color: #710909; }$/;"	c
+#qunit-tests li li	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests li li {$/;"	s
+#qunit-tests li li.pass	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests li li.pass {$/;"	c
+#qunit-tests .pass	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .pass                          { color: #528CE0; background-color: #D2E0E6; }$/;"	c
+#qunit-tests .pass .test-name	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .pass .test-name               { color: #366097; }$/;"	c
+#qunit-tests .pass .test-actual	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .pass .test-actual,$/;"	c
+#qunit-tests .pass .test-expected	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .pass .test-expected           { color: #999999; }$/;"	c
+#qunit-banner.qunit-pass	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-banner.qunit-pass                    { background-color: #C6E746; }$/;"	c
+#qunit-tests li li.fail	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests li li.fail {$/;"	c
+#qunit-tests > li:last-child	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests > li:last-child {$/;"	s
+#qunit-tests .fail	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .fail                          { color: #000000; background-color: #EE5757; }$/;"	c
+#qunit-tests .fail .test-name	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .fail .test-name,$/;"	c
+#qunit-tests .fail .module-name	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .fail .module-name             { color: #000000; }$/;"	c
+#qunit-tests .fail .test-actual	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .fail .test-actual             { color: #EE5757; }$/;"	c
+#qunit-tests .fail .test-expected	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-tests .fail .test-expected           { color: green;   }$/;"	c
+#qunit-banner.qunit-fail	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-banner.qunit-fail                    { background-color: #EE5757; }$/;"	c
+#qunit-testresult	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-testresult {$/;"	i
+#qunit-testresult .module-name	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-testresult .module-name {$/;"	c
+#qunit-fixture	R/slide_files/reveal.js-3.3.0.1/test/qunit-1.12.0.css	/^#qunit-fi

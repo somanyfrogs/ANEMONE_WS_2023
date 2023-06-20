@@ -34,7 +34,8 @@ meta <- read_csv("../ANEMONE DATA/Meta_table.csv")
 
 2. 各自PCのローカルに'anemone'というフォルダ(ディレクトリ)を作成
 
-3. Dropboxのリンクから'ANEMONE DATA'をDLする  
+3. 私のGitHubアカウント(https://github.com/somanyfrogs)から  
+   レポジトリ'ANEMONE_WS_2023'をDLする
    
 
 ## データの説明１
