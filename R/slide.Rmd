@@ -1,0 +1,239 @@
+---
+title: "ANEMONE Workshop"
+author: Kazutaka Kawatsu
+date: 2023-06-20
+output:
+    revealjs::revealjs_presentation:
+        incremental: true
+        self_contained: false
+        theme: night
+        highlight: zenburn
+        transition: fade
+        reveal_options:
+            slideNumber: true
+            previewLinks: true
+        pandoc_args:
+            - '--lua-filter'
+            - '../incremental-blocks.lua'
+        css: ../style_anemoneews.css
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, warning = FALSE, fig.show = "hold")
+library(foreach)
+library(patchwork)
+library(tidyverse)
+
+smat <- read_csv("../ANEMONE DATA/Species_matrix.csv")
+gmat <- read_csv("../ANEMONE DATA/Genus_matrix.csv")
+meta <- read_csv("../ANEMONE DATA/Meta_table.csv")
+```
+
+## はじめに：環境の整備
+1. RStudio等を起動する
+
+2. 各自PCのローカルに'anemone'というフォルダ(ディレクトリ)を作成
+
+3. Dropboxのリンクから'ANEMONE DATA'をDLする  
+   
+
+## データの説明１
+'ANEMONE DATA'には3(+ 3)種類のデータが含まれている  
+(データはcsv/rds形式で提供)
+
+1. Species_matrix：種レベル解像度の群集データ（リード数）
+
+2. Genus_matrix：属レベルの群集データ
+
+3. Meta_table：各サンプルの時空間情報
+
+4. Community_data：ANEMONE DBの生データ
+
+5. Meta_data：ANEMONE DBの生メタデータ
+
+6. Name_table：各サンプルの調査プロジェクトとシーケンスラン情報
+
+## データの説明２
+1. 現在ANEMONE DBで公開済みのものを整形したデータ  
+   (by 笠田さん)
+
+2. 基本的に2019/01/10–2021/08/31までのデータ  
+
+3. 有効サンプル数 = 978 (同じ地点の別日を含む)
+
+4. 海川湖の区別なし
+
+5. 同じ地点で水深のみが違うものあり  
+   (例：KUM-Otomi-Surface/Bottom)
+
+6. 緯度経度は本当の採集位置が属する二次メッシュの中心点  
+   (希少種等への配慮のため)
+
+## データの概要１
+データを読み込む
+
+:::{.incremental-blocks}
+```{r, eval = FALSE}
+## データ整形・可視化・解析にtidyverseを利用
+library(foreach)
+library(tidyverse)
+
+## データのロード
+smat <- read_csv("ANEMONE DATA/Species_matrix.csv")
+gmat <- read_csv("ANEMONE DATA/Genus_matrix.csv")
+meta <- read_csv("ANEMONE DATA/Meta_table.csv")
+smat
+```
+
+```{r, echo = FALSE}
+smat
+```
+:::
+
+## データの概要２
+データの地理分布を見てみる
+```{r, eval = FALSE}
+map_data("world") |> filter(region == "Japan") |> ggplot(aes(x = long, y = lat)) +
+    geom_polygon(aes(group = group), fill = "grey75", color = "black") +
+    geom_point(data = meta |> distinct(year, lat, lon) |> rename(long = lon), aes(color = factor(year)))
+```
+
+```{r, echo = FALSE, fig.width = 5, fig.asp = 0.8}
+map_data("world") |> filter(region == "Japan") |> ggplot(aes(x = long, y = lat)) +
+    geom_polygon(aes(group = group), fill = "grey75", color = "black") +
+    geom_point(data = meta |> distinct(year, lat, lon) |> rename(long = lon), aes(color = factor(year)), shape = 16, position = position_jitter(width = 0.1, height = 0.1)) +
+    ggsci::scale_color_npg() + coord_fixed(1.2)
+```
+
+## データの概要３
+:::{.incremental-blocks}
+```{r}
+meta |> count(year) # 年度ごとのデータ数を調べてみる
+```
+:::
+
+:::{.incremental-blocks}
+```{r}
+# 水深別の各サイトのデータ数を降順にみてみる
+meta2 <- meta |> mutate(site = str_sub(samplename, 15)) # samplenameの頭の情報yyyymmddxxxx-を除去
+meta2 |> count(site) |> arrange(desc(n)) # サイト名ごとにデータ数をcountで数えarrangeで降順に並べる
+```
+:::
+
+## データの概要４
+:::{.incremental-blocks}
+```{r}
+# 各サンプルのデータサイズ・サンプル間隔を調べる
+tbl <- foreach(s = distinct(meta2, site)$site, .combine = bind_rows) %do% {
+    tmp <- meta2 |> filter(site == s) |> arrange(date)
+    if(nrow(tmp) == 1) {
+        tibble(site = s, size = 1, intvl = 0)
+    } else {
+        d <- tmp |> pull(date) |> as.numeric()
+        tibble(site = s, size = nrow(tmp), intvl = mean(lead(d) - d, na.rm = TRUE))
+    }
+}
+```
+
+```{r, echo = FALSE, fig.width = 10, fig.asp = 0.5}
+gp1 <- tbl |> ggplot(aes(x = intvl)) + geom_vline(xintercept = c(7, 30), color = "red", linetype = 2) +
+    geom_histogram() + ggtitle("Distribution of sampling interval")
+gp2 <- tbl |> ggplot(aes(x = size, y = intvl)) + geom_point() +
+    annotate("text", x = 68, y = 25, label = "FRA-\nSetonaikaiWest", hjust = "left", size = 2.2) +
+    annotate("text", x = 95, y = 25, label = "KUM-\nNagahama", hjust = "left", size = 2.2) + ggtitle("Data size & sampling interval")
+gp1 + gp2
+```
+:::
+
+## データの概要５
+### サンプリング間隔の多いサイトの(サンプル)多様度時系列を調べる
+
+:::{.inremental-blocks}
+```{r}
+div_ts <- smat |>
+    filter(str_detect(samplename, "KUM-Nagahama$") | str_detect(samplename, "FRA-SetonaikaiWest$")) |>
+    pivot_longer(!samplename, names_to = "Species", values_to = "read") |> group_by(samplename) |>
+    reframe(Order = str_c("D", 0:2), hillD = as.numeric(vegan::renyi(read, scale = 0:2))) |>
+    ungroup() |> pivot_wider(names_from = Order, values_from = hillD)
+div_ts
+```
+:::
+
+## データの概要６
+### サンプリング間隔の多いサイトの(サンプル)多様度時系列を調べる
+
+:::{.incrementa-blocks}
+```{r, eval = FALSE}
+## メタデータと連結することで時空間情報を利用できる
+left_join(div_ts, meta) |> mutate(site = str_sub(samplename, 15)) |>
+    pivot_longer(c("D0", "D1", "D2"), names_to = "Order", values_to = "hillD") |>
+    ggplot(aes(x = date, y = hillD, color = Order)) + facet_wrap(. ~ site) + geom_path()
+```
+
+```{r, echo = FALSE, fig.width = 10, fig.asp = 0.5}
+left_join(div_ts, meta) |> mutate(site = str_sub(samplename, 15)) |>
+    pivot_longer(c("D0", "D1", "D2"), names_to = "Order", values_to = "hillD") |>
+    ggplot(aes(x = date, y = hillD, color = Order)) + facet_wrap(. ~ site) + geom_path() + ggsci::scale_color_npg()
+
+```
+:::
+
+## データの概要７
+```{r}
+# 最頻種を調べてみる
+(tmp0 <- smat |> mutate(across(!samplename, \(x) if_else(x != 0, 1, 0))) |> summarize(across(!samplename, sum)) |>
+    pivot_longer(everything(), names_to = "Species", values_to = "detect") |> arrange(desc(detect)))
+```
+
+## データの概要８
+```{r}
+# リード数が多い種を調べてみる
+tmp1 <- smat |> summarize(across(!samplename, sum)) |>
+    pivot_longer(everything(), names_to = "Species", values_to = "read") |> arrange(desc(read))
+tmp1 |> head(5)
+```
+
+:::{.incremental-blocks}
+```{r, echo = FALSE, fig.width = 4, fig.asp = 0.8}
+full_join(tmp0, tmp1) |> ggplot(aes(x = detect, y = log(read))) + geom_point()
+```
+:::
+
+## データの概要９
+### 出現頻度の多い魚種の空間分布を調べる
+
+:::{.incremental-blocks}
+```{r}
+## データの作成，smatにメタデータの地理情報を連結する
+frq_fish_dist <- left_join(smat, meta) |> mutate(site = str_sub(samplename, 15)) |>
+    group_by(site) |> summarize(across(!samplename, mean)) |> ungroup() |>
+    select(!c(site, year, month, date)) |> rename(long = lon)
+    
+```
+
+```{r, echo = FALSE, fig.width = 8, fig.asp = 0.5}
+i <- 2; j <- 13
+gp1 <- map_data("world") |> filter(region == "Japan") |> ggplot(aes(x = long, y = lat)) +
+    geom_polygon(aes(group = group), fill = "grey75", color = "black") +
+    geom_point(data = filter(frq_fish_dist, !!sym(tmp0$Species[i]) > 0), aes(color = log(!!sym(tmp0$Species[i])))) +
+    viridis::scale_color_viridis(guide = "none") + ggtitle(tmp0$Species[i])
+gp2 <- map_data("world") |> filter(region == "Japan") |> ggplot(aes(x = long, y = lat)) +
+    geom_polygon(aes(group = group), fill = "grey75", color = "black") +
+    geom_point(data = filter(frq_fish_dist, !!sym(tmp0$Species[j]) > 0), aes(color = log(!!sym(tmp0$Species[j])))) +
+    viridis::scale_color_viridis(guide = "none") + ggtitle(tmp0$Species[j])
+gp1 + gp2
+```
+:::
+
+## まとめ
+
+1. 多種・多様な地点を含むデータセット
+
+2. スナップショットデータ  
+   -> 地点数多・地理的分布の解析
+
+3. 高頻度観測データ  
+   -> 地点数少・時間変動の解析
+
+4. 生物量・メタデータを連結して解析  
+   (e.g., Species_matrix + Meta_table)

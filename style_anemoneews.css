@@ -1,0 +1,18 @@
+<style>
+    .reveal p {
+        text-align: left;
+    }
+
+    .reveal ul {
+        display: block;
+    }
+
+    .reveal ol {
+        display: block;
+    }
+
+    .reveal .slides {
+        text-align: left;
+    }
+{/style}
+
